@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickGUI — Class Metamodel Diagram Analysis</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --border: #475569;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+            --accent3: #a78bfa;
+            --green: #4ade80;
+            --orange: #fb923c;
+            --pink: #f472b6;
+            --red: #f87171;
+            --yellow: #facc15;
+            --cyan: #22d3ee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            scroll-behavior: smooth;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+        }
+        nav .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        nav .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+        }
+        nav .logo span { color: var(--accent2); }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 0.25rem;
+        }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        nav a:hover {
+            color: var(--accent);
+            background: var(--surface);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.06) 0%, transparent 70%);
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        .hero .badge-row {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.35rem 1rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .badge .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+        }
+
+        section {
+            margin-bottom: 5rem;
+        }
+
+        .section-label {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--accent2);
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        /* ===== DIAGRAM IMAGE ===== */
+        .diagram-frame {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .diagram-frame img {
+            max-width: 100%;
+            height: auto;
+        }
+        .diagram-caption {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* ===== CARDS GRID ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .card-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        .card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ===== HIERARCHY VISUALIZATION ===== */
+        .hierarchy {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        .hierarchy .cls { color: var(--accent); font-weight: 600; }
+        .hierarchy .abs { color: var(--accent3); font-style: italic; }
+        .hierarchy .enm { color: var(--orange); }
+        .hierarchy .prop { color: var(--text-muted); }
+        .hierarchy .branch { color: var(--border); }
+
+        /* ===== RELATIONSHIP TABLE ===== */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        thead {
+            background: var(--surface2);
+        }
+        th {
+            padding: 0.85rem 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.75rem 1.2rem;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+            color: var(--text-muted);
+        }
+        tbody tr {
+            background: var(--surface);
+            transition: background 0.15s;
+        }
+        tbody tr:hover {
+            background: var(--surface2);
+        }
+
+        /* ===== TAG CHIPS ===== */
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .tag-inherit  { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+        .tag-compose  { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+        .tag-assoc    { background: rgba(251, 146, 60, 0.15); color: var(--orange); }
+        .tag-depend   { background: rgba(244, 114, 182, 0.15); color: var(--pink); }
+        .tag-realize  { background: rgba(129, 140, 248, 0.15); color: var(--accent2); }
+        .tag-build    { background: rgba(250, 204, 21, 0.15); color: var(--yellow); }
+
+        /* ===== CODE BLOCK ===== */
+        .code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .code-header {
+            background: var(--surface2);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .code-header .dot-row { display: flex; gap: 6px; }
+        .code-header .dot-row span {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        pre .kw    { color: var(--pink); }
+        pre .type  { color: var(--accent); }
+        pre .str   { color: var(--green); }
+        pre .num   { color: var(--orange); }
+        pre .cmt   { color: var(--text-muted); font-style: italic; }
+        pre .meth  { color: var(--yellow); }
+
+        /* ===== PATTERN CARD ===== */
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .pattern-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .pattern-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .pattern-card.composite::before { background: var(--accent); }
+        .pattern-card.visitor::before   { background: var(--green); }
+        .pattern-card.builder::before   { background: var(--orange); }
+        .pattern-card.crtp::before      { background: var(--pink); }
+        .pattern-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .pattern-card .pattern-name {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .pattern-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .pattern-card .involved {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--accent2);
+        }
+
+        /* ===== CALLOUT BOX ===== */
+        .callout {
+            background: rgba(56, 189, 248, 0.06);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .callout.green {
+            background: rgba(74, 222, 128, 0.06);
+            border-left-color: var(--green);
+        }
+        .callout.orange {
+            background: rgba(251, 146, 60, 0.06);
+            border-left-color: var(--orange);
+        }
+        .callout strong { color: var(--text); }
+
+        /* ===== MULTIPLICITY DIAGRAM ===== */
+        .mult-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        .mult-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+        .mult-item .mult-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .mult-item .mult-boxes {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 0.75rem 0;
+        }
+        .mult-box {
+            width: 70px;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .mult-line {
+            width: 40px;
+            height: 2px;
+            background: var(--border);
+            position: relative;
+        }
+        .mult-line::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===== LAYER SECTION ===== */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .layer {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+        .layer-badge {
+            flex-shrink: 0;
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .layer-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        .layer-content p {
+            font-size: 0.88rem;
+            margin: 0;
+        }
+        .layer-content .files {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .file-chip {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            font-family: 'Cascadia Code', monospace;
+            color: var(--text-muted);
+        }
+
+        /* ===== ENUM VISUAL ===== */
+        .enum-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+        .enum-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            flex: 1;
+            min-width: 220px;
+        }
+        .enum-card h4 {
+            font-size: 1rem;
+            color: var(--orange);
+            margin-bottom: 0.75rem;
+        }
+        .enum-val {
+            display: inline-block;
+            background: rgba(251, 146, 60, 0.1);
+            border: 1px solid rgba(251, 146, 60, 0.25);
+            border-radius: 6px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.78rem;
+            font-family: monospace;
+            color: var(--orange);
+            margin: 0.15rem 0.15rem 0.15rem 0;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ===== TOC SIDEBAR (VISIBLE ON LARGE SCREENS) ===== */
+        .toc-float {
+            position: fixed;
+            top: 80px;
+            right: 1.5rem;
+            width: 200px;
+            font-size: 0.78rem;
+        }
+        .toc-float a {
+            display: block;
+            padding: 0.3rem 0.6rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .toc-float a:hover {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        @media (max-width: 1500px) {
+            .toc-float { display: none; }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            nav ul { display: none; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== SMOOTH REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== INLINE CODE ===== */
+        code {
+            background: var(--surface2);
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-family: 'Cascadia Code', monospace;
+            font-size: 0.85em;
+            color: var(--cyan);
+        }
+
+        /* ===== NUMBERED LIST INSIDE SECTIONS ===== */
+        ol, ul {
+            margin: 0.5rem 0 1rem 1.5rem;
+            color: var(--text-muted);
+        }
+        li { margin-bottom: 0.4rem; }
+
+        /* ===== STATS ROW ===== */
+        .stats-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+        .stat .number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat .label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<nav>
+    <div class="nav-inner">
+        <div class="logo">Quick<span>GUI</span></div>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#hierarchy">Hierarchy</a></li>
+            <li><a href="#classes">Classes</a></li>
+            <li><a href="#relationships">Relationships</a></li>
+            <li><a href="#enums">Enumerations</a></li>
+            <li><a href="#patterns">Patterns</a></li>
+            <li><a href="#dsl">DSL Layer</a></li>
+            <li><a href="#semantics">Semantics</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ============ TOC SIDEBAR ============ -->
+<div class="toc-float">
+    <a href="#overview">1. Overview</a>
+    <a href="#diagram">2. Diagram</a>
+    <a href="#hierarchy">3. Hierarchy</a>
+    <a href="#classes">4. Class Breakdown</a>
+    <a href="#relationships">5. Relationships</a>
+    <a href="#multiplicity">6. Multiplicities</a>
+    <a href="#enums">7. Enumerations</a>
+    <a href="#patterns">8. Design Patterns</a>
+    <a href="#dsl">9. DSL Layer</a>
+    <a href="#semantics">10. Semantics</a>
+    <a href="#mapping">11. Mapping</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+    <h1>Class Metamodel Diagram Analysis</h1>
+    <p class="subtitle">
+        A comprehensive analytical breakdown of the QuickGUI UML class diagram — exploring
+        inheritance hierarchies, composition structures, design patterns, and the
+        relationship between the metamodel, the internal DSL, and the semantics layers.
+    </p>
+    <div class="badge-row">
+        <span class="badge"><span class="dot" style="background:var(--accent)"></span> Model-Driven Architecture</span>
+        <span class="badge"><span class="dot" style="background:var(--green)"></span> Internal DSL in Java</span>
+        <span class="badge"><span class="dot" style="background:var(--orange)"></span> Fluent Builder API</span>
+        <span class="badge"><span class="dot" style="background:var(--pink)"></span> Visitor-Based Semantics</span>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- ============ SECTION 1: OVERVIEW ============ -->
+    <section id="overview" class="reveal">
+        <div class="section-label">Section 1</div>
+        <h2>High-Level Overview</h2>
+        <p>
+            The QuickGUI class metamodel defines the <strong>abstract syntax</strong> of a GUI domain-specific language.
+            It captures the essential concepts needed to describe graphical user interfaces — windows, panels, widgets,
+            layouts, and positions — organized into a clean inheritance hierarchy rooted at the abstract
+            <code>GUIElement</code> class.
+        </p>
+        <p>
+            The diagram describes three distinct architectural layers that work together:
+        </p>
+
+        <div class="layer-stack">
+            <div class="layer">
+                <div class="layer-badge" style="background:rgba(56,189,248,0.15); color:var(--accent);">M</div>
+                <div class="layer-content">
+                    <h4>Metamodel Layer (Domain Model)</h4>
+                    <p>Defines the abstract syntax — what GUI concepts exist and how they relate. This is the core of the architecture.</p>
+                    <div class="files">
+                        <span class="file-chip">GUIElement.java</span>
+                        <span class="file-chip">Window.java</span>
+                        <span class="file-chip">Panel.java</span>
+                        <span class="file-chip">Widget.java</span>
+                        <span class="file-chip">Layout.java</span>
+                        <span class="file-chip">+ 8 widget types</span>
+                    </div>
+                </div>
+            </div>
+            <div class="layer">
+                <div class="layer-badge" style="background:rgba(250,204,21,0.15); color:var(--yellow);">D</div>
+                <div class="layer-content">
+                    <h4>DSL Layer (Fluent Builders)</h4>
+                    <p>Provides the concrete syntax — the fluent Java API that constructs model instances via method chaining.</p>
+                    <div class="files">
+                        <span class="file-chip">GUI.java</span>
+                        <span class="file-chip">WindowBuilder.java</span>
+                        <span class="file-chip">PanelBuilder.java</span>
+                        <span class="file-chip">ContainerBuilder.java</span>
+                    </div>
+                </div>
+            </div>
+            <div class="layer">
+                <div class="layer-badge" style="background:rgba(74,222,128,0.15); color:var(--green);">S</div>
+                <div class="layer-content">
+                    <h4>Semantics Layer (Visitors)</h4>
+                    <p>Provides meaning — interpretation (live GUI) and code generation (standalone source) via the Visitor pattern.</p>
+                    <div class="files">
+                        <span class="file-chip">GUIVisitor.java</span>
+                        <span class="file-chip">SwingInterpreter.java</span>
+                        <span class="file-chip">JavaCodeGenerator.java</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat">
+                <div class="number">16</div>
+                <div class="label">Total Classes</div>
+            </div>
+            <div class="stat">
+                <div class="number">3</div>
+                <div class="label">Abstract Classes</div>
+            </div>
+            <div class="stat">
+                <div class="number">8</div>
+                <div class="label">Concrete Widgets</div>
+            </div>
+            <div class="stat">
+                <div class="number">2</div>
+                <div class="label">Enumerations</div>
+            </div>
+            <div class="stat">
+                <div class="number">4</div>
+                <div class="label">Design Patterns</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 2: DIAGRAM ============ -->
+    <section id="diagram" class="reveal">
+        <div class="section-label">Section 2</div>
+        <h2>The UML Class Diagram</h2>
+        <p>
+            Below is the complete UML class diagram for the QuickGUI metamodel. It captures the
+            inheritance hierarchy, composition relationships, associations, and builder dependencies
+            across all three layers.
+        </p>
+
+        <!-- SVG Inline Diagram -->
+        <div class="diagram-frame">
+            <svg viewBox="0 0 1100 920" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, system-ui, sans-serif" font-size="11">
+                <!-- ===== DEFS ===== -->
+                <defs>
+                    <marker id="arrowOpen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" fill="none" stroke="#475569" stroke-width="1.2">
+                        <polyline points="0 0, 10 3.5, 0 7" />
+                    </marker>
+                    <marker id="arrowClosed" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" fill="#475569" stroke="none">
+                        <polygon points="0 0, 12 4, 0 8" />
+                    </marker>
+                    <marker id="diamond" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto" fill="#1e293b" stroke="#475569" stroke-width="1.2">
+                        <polygon points="6 0, 12 4, 6 8, 0 4" />
+                    </marker>
+                    <marker id="diamondFill" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto" fill="#475569" stroke="#475569" stroke-width="1">
+                        <polygon points="6 0, 12 4, 6 8, 0 4" />
+                    </marker>
+                    <marker id="inherit" markerWidth="14" markerHeight="10" refX="14" refY="5" orient="auto" fill="#1e293b" stroke="#475569" stroke-width="1.2">
+                        <polygon points="0 0, 14 5, 0 10" />
+                    </marker>
+                </defs>
+
+                <style>
+                    .cls-box { fill: #1e293b; stroke: #475569; stroke-width: 1.2; rx: 6; }
+                    .cls-header { fill: #334155; rx: 6; }
+                    .cls-title { font-weight: 700; fill: #e2e8f0; font-size: 12px; }
+                    .cls-stereo { font-size: 9px; fill: #94a3b8; font-style: italic; }
+                    .cls-attr { fill: #94a3b8; font-size: 10px; }
+                    .cls-method { fill: #38bdf8; font-size: 10px; }
+                    .enum-box { fill: #1e293b; stroke: #fb923c; stroke-width: 1.2; rx: 6; }
+                    .enum-header { fill: rgba(251,146,60,0.12); rx: 6; }
+                    .enum-title { font-weight: 700; fill: #fb923c; font-size: 12px; }
+                    .enum-val { fill: #fb923c; font-size: 10px; }
+                    .rel-line { fill: none; stroke: #475569; stroke-width: 1.2; }
+                    .rel-dash { fill: none; stroke: #475569; stroke-width: 1.2; stroke-dasharray: 5,4; }
+                    .mult { font-size: 9px; fill: #94a3b8; }
+                    .label-text { font-size: 9px; fill: #94a3b8; font-style: italic; }
+                </style>
+
+                <!-- ===== GUI (Entry Point) ===== -->
+                <g transform="translate(30, 40)">
+                    <rect class="cls-box" x="0" y="0" width="170" height="50" />
+                    <rect class="cls-header" x="0" y="0" width="170" height="22" />
+                    <text class="cls-title" x="85" y="15" text-anchor="middle">GUI</text>
+                    <text class="cls-method" x="8" y="38">+ window(title): WindowBuilder</text>
+                </g>
+
+                <!-- ===== PanelBuilder ===== -->
+                <g transform="translate(30, 150)">
+                    <rect class="cls-box" x="0" y="0" width="140" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="140" height="22" />
+                    <text class="cls-title" x="70" y="15" text-anchor="middle">PanelBuilder</text>
+                    <text class="cls-attr" x="8" y="38">- panel: Panel</text>
+                    <text class="cls-method" x="8" y="52">+ build(): Panel</text>
+                </g>
+
+                <!-- ===== WindowBuilder ===== -->
+                <g transform="translate(500, 40)">
+                    <rect class="cls-box" x="0" y="0" width="170" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="170" height="22" />
+                    <text class="cls-title" x="85" y="15" text-anchor="middle">WindowBuilder</text>
+                    <text class="cls-attr" x="8" y="38">- window: Window</text>
+                    <text class="cls-method" x="8" y="52">+ build(): Window</text>
+                </g>
+
+                <!-- ===== GUIElement (Abstract Root) ===== -->
+                <g transform="translate(360, 170)">
+                    <rect class="cls-box" x="0" y="0" width="170" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="170" height="22" />
+                    <text class="cls-stereo" x="85" y="10" text-anchor="middle">&lt;&lt;abstract&gt;&gt;</text>
+                    <text class="cls-title" x="85" y="20" text-anchor="middle">GUIElement</text>
+                    <text class="cls-attr" x="8" y="38">- name: String</text>
+                    <text class="cls-method" x="8" y="52">+ getName(): String</text>
+                </g>
+
+                <!-- ===== Panel ===== -->
+                <g transform="translate(200, 310)">
+                    <rect class="cls-box" x="0" y="0" width="190" height="100" />
+                    <rect class="cls-header" x="0" y="0" width="190" height="22" />
+                    <text class="cls-title" x="95" y="15" text-anchor="middle">Panel</text>
+                    <text class="cls-attr" x="8" y="38">- title: String</text>
+                    <text class="cls-attr" x="8" y="50">- layout: Layout</text>
+                    <text class="cls-attr" x="8" y="62">- children: List&lt;GUIElement&gt;</text>
+                    <text class="cls-method" x="8" y="78">+ setLayout(Layout)</text>
+                    <text class="cls-method" x="8" y="90">+ addChild(GUIElement, Position)</text>
+                </g>
+
+                <!-- ===== Window ===== -->
+                <g transform="translate(460, 310)">
+                    <rect class="cls-box" x="0" y="0" width="190" height="110" />
+                    <rect class="cls-header" x="0" y="0" width="190" height="22" />
+                    <text class="cls-title" x="95" y="15" text-anchor="middle">Window</text>
+                    <text class="cls-attr" x="8" y="38">- title: String</text>
+                    <text class="cls-attr" x="8" y="50">- width: Integer</text>
+                    <text class="cls-attr" x="8" y="62">- height: Integer</text>
+                    <text class="cls-attr" x="8" y="74">- layout: Layout</text>
+                    <text class="cls-attr" x="8" y="86">- children: List&lt;GUIElement&gt;</text>
+                    <text class="cls-method" x="8" y="102">+ setSize(int, int)</text>
+                </g>
+
+                <!-- ===== Layout ===== -->
+                <g transform="translate(740, 280)">
+                    <rect class="cls-box" x="0" y="0" width="170" height="100" />
+                    <rect class="cls-header" x="0" y="0" width="170" height="22" />
+                    <text class="cls-title" x="85" y="15" text-anchor="middle">Layout</text>
+                    <text class="cls-attr" x="8" y="38">- rows: Integer</text>
+                    <text class="cls-attr" x="8" y="50">- columns: Integer</text>
+                    <text class="cls-attr" x="8" y="62">- hgap: Integer</text>
+                    <text class="cls-attr" x="8" y="74">- vgap: Integer</text>
+                    <text class="cls-method" x="8" y="90">+ getLayoutType(): LayoutType</text>
+                </g>
+
+                <!-- ===== LayoutType Enum ===== -->
+                <g transform="translate(800, 150)">
+                    <rect class="enum-box" x="0" y="0" width="130" height="55" />
+                    <rect class="enum-header" x="0" y="0" width="130" height="22" />
+                    <text class="enum-title" x="65" y="10" text-anchor="middle" font-size="9">&lt;&lt;enumeration&gt;&gt;</text>
+                    <text class="enum-title" x="65" y="20" text-anchor="middle">LayoutType</text>
+                    <text class="enum-val" x="8" y="38">HORIZONTAL</text>
+                    <text class="enum-val" x="8" y="50">VERTICAL</text>
+                </g>
+
+                <!-- ===== Widget (Abstract) ===== -->
+                <g transform="translate(350, 490)">
+                    <rect class="cls-box" x="0" y="0" width="190" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="190" height="22" />
+                    <text class="cls-stereo" x="95" y="10" text-anchor="middle">&lt;&lt;abstract&gt;&gt;</text>
+                    <text class="cls-title" x="95" y="20" text-anchor="middle">Widget</text>
+                    <text class="cls-attr" x="8" y="38">- position: Position</text>
+                    <text class="cls-method" x="8" y="52">+ setPosition(Position)</text>
+                </g>
+
+                <!-- ===== Position Enum ===== -->
+                <g transform="translate(30, 480)">
+                    <rect class="enum-box" x="0" y="0" width="110" height="85" />
+                    <rect class="enum-header" x="0" y="0" width="110" height="22" />
+                    <text class="enum-title" x="55" y="10" text-anchor="middle" font-size="9">&lt;&lt;enumeration&gt;&gt;</text>
+                    <text class="enum-title" x="55" y="20" text-anchor="middle">Position</text>
+                    <text class="enum-val" x="8" y="38">TOP</text>
+                    <text class="enum-val" x="8" y="50">BOTTOM</text>
+                    <text class="enum-val" x="8" y="62">LEFT</text>
+                    <text class="enum-val" x="8" y="74">RIGHT</text>
+                </g>
+
+                <!-- ===== Concrete Widgets Row ===== -->
+                <!-- TextArea -->
+                <g transform="translate(20, 640)">
+                    <rect class="cls-box" x="0" y="0" width="130" height="70" />
+                    <rect class="cls-header" x="0" y="0" width="130" height="22" />
+                    <text class="cls-title" x="65" y="15" text-anchor="middle">TextArea</text>
+                    <text class="cls-attr" x="8" y="38">- rows: Integer</text>
+                    <text class="cls-attr" x="8" y="50">- columns: Integer</text>
+                    <text class="cls-attr" x="8" y="62">- scrollable: Boolean</text>
+                </g>
+
+                <!-- Button -->
+                <g transform="translate(170, 640)">
+                    <rect class="cls-box" x="0" y="0" width="120" height="50" />
+                    <rect class="cls-header" x="0" y="0" width="120" height="22" />
+                    <text class="cls-title" x="60" y="15" text-anchor="middle">Button</text>
+                    <text class="cls-attr" x="8" y="38">- label: String</text>
+                </g>
+
+                <!-- ComboBox -->
+                <g transform="translate(310, 640)">
+                    <rect class="cls-box" x="0" y="0" width="140" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="140" height="22" />
+                    <text class="cls-title" x="70" y="15" text-anchor="middle">ComboBox</text>
+                    <text class="cls-attr" x="8" y="38">- items: List&lt;String&gt;</text>
+                    <text class="cls-attr" x="8" y="50">- selectedIndex: Integer</text>
+                </g>
+
+                <!-- CheckBox -->
+                <g transform="translate(470, 640)">
+                    <rect class="cls-box" x="0" y="0" width="140" height="60" />
+                    <rect class="cls-header" x="0" y="0" width="140" height="22" />
+                    <text class="cls-title" x="70" y="15" text-anchor="middle">CheckBox</text>
+                    <text class="cls-attr" x="8" y="38">- label: String</text>
+                    <text class="cls-attr" x="8" y="50">- selected: Boolean</text>
+                </g>
+
+                <!-- Label -->
+                <g transform="translate(630, 640)">
+                    <rect class="cls-box" x="0" y="0" width="120" height="50" />
+                    <rect class="cls-header" x="0" y="0" width="120" height="22" />
+                    <text class="cls-title" x="60" y="15" text-anchor="middle">Label</text>
+                    <text class="cls-attr" x="8" y="38">- text: String</text>
+                </g>
+
+                <!-- TextField -->
+                <g transform="translate(770, 640)">
+                    <rect class="cls-box" x="0" y="0" width="130" height="55" />
+                    <rect class="cls-header" x="0" y="0" width="130" height="22" />
+                    <text class="cls-title" x="65" y="15" text-anchor="middle">TextField</text>
+                    <text class="cls-attr" x="8" y="38">- columns: Integer</text>
+                    <text class="cls-attr" x="8" y="50">- text: String</text>
+                </g>
+
+                <!-- Slider -->
+                <g transform="translate(920, 640)">
+                    <rect class="cls-box" x="0" y="0" width="130" height="55" />
+                    <rect class="cls-header" x="0" y="0" width="130" height="22" />
+                    <text class="cls-title" x="65" y="15" text-anchor="middle">Slider</text>
+                    <text class="cls-attr" x="8" y="38">- min: Integer</text>
+                    <text class="cls-attr" x="8" y="50">- max: Integer</text>
+                </g>
+
+                <!-- Separator (below Slider) -->
+                <g transform="translate(920, 720)">
+                    <rect class="cls-box" x="0" y="0" width="130" height="40" />
+                    <rect class="cls-header" x="0" y="0" width="130" height="22" />
+                    <text class="cls-title" x="65" y="15" text-anchor="middle">Separator</text>
+                    <text class="cls-attr" x="8" y="38">- orientation</text>
+                </g>
+
+                <!-- ===== RELATIONSHIPS ===== -->
+
+                <!-- GUI --creates--> WindowBuilder -->
+                <line class="rel-dash" x1="200" y1="65" x2="500" y2="65" marker-end="url(#arrowOpen)" />
+                <text class="label-text" x="350" y="58">creates</text>
+
+                <!-- GUI --creates--> PanelBuilder -->
+                <line class="rel-dash" x1="115" y1="90" x2="100" y2="150" marker-end="url(#arrowOpen)" />
+                <text class="label-text" x="70" y="120">creates</text>
+
+                <!-- WindowBuilder --builds--> Window (via GUIElement) -->
+                <line class="rel-dash" x1="585" y1="100" x2="555" y2="310" marker-end="url(#arrowOpen)" />
+                <text class="label-text" x="580" y="200">builds</text>
+
+                <!-- PanelBuilder --builds--> Panel -->
+                <line class="rel-dash" x1="100" y1="210" x2="260" y2="310" marker-end="url(#arrowOpen)" />
+                <text class="label-text" x="140" y="260">builds</text>
+
+                <!-- Panel --> GUIElement (inheritance) -->
+                <line class="rel-line" x1="320" y1="310" x2="410" y2="230" marker-end="url(#inherit)" />
+
+                <!-- Window --> GUIElement (inheritance) -->
+                <line class="rel-line" x1="520" y1="310" x2="480" y2="230" marker-end="url(#inherit)" />
+
+                <!-- Widget --> GUIElement (inheritance) -->
+                <line class="rel-line" x1="445" y1="490" x2="445" y2="230" marker-end="url(#inherit)" />
+
+                <!-- Window *--> Layout (composition) -->
+                <line class="rel-line" x1="650" y1="370" x2="740" y2="340" marker-start="url(#diamondFill)" />
+                <text class="mult" x="662" y="362">1</text>
+                <text class="mult" x="727" y="334">1</text>
+
+                <!-- Panel *--> Layout (composition) -->
+                <line class="rel-line" x1="390" y1="360" x2="740" y2="330" marker-start="url(#diamondFill)" />
+                <text class="mult" x="395" y="353">1</text>
+                <text class="mult" x="725" y="325">1</text>
+
+                <!-- Layout --> LayoutType -->
+                <line class="rel-line" x1="865" y1="280" x2="865" y2="205" marker-end="url(#arrowOpen)" />
+                <text class="mult" x="870" y="250">1</text>
+
+                <!-- Window *--> GUIElement children (composition) -->
+                <path class="rel-line" d="M 460,360 L 445,360 L 445,240 L 460,240" marker-start="url(#diamondFill)" />
+                <text class="mult" x="425" y="355">1</text>
+                <text class="mult" x="458" y="255">0..*</text>
+
+                <!-- Panel *--> GUIElement children (composition) -->
+                <path class="rel-line" d="M 250,310 L 250,200 L 360,200" marker-start="url(#diamondFill)" />
+                <text class="mult" x="233" y="305">1</text>
+                <text class="mult" x="340" y="195">0..*</text>
+
+                <!-- Widget --> Position association -->
+                <line class="rel-line" x1="350" y1="520" x2="140" y2="520" marker-end="url(#arrowOpen)" />
+                <text class="mult" x="160" y="512">1</text>
+                <text class="mult" x="335" y="512">1</text>
+
+                <!-- Concrete widgets --> Widget (inheritance) -->
+                <line class="rel-line" x1="85" y1="640" x2="380" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="230" y1="640" x2="400" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="380" y1="640" x2="430" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="540" y1="640" x2="450" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="690" y1="640" x2="470" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="835" y1="640" x2="490" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="985" y1="640" x2="510" y2="550" marker-end="url(#inherit)" />
+                <line class="rel-line" x1="985" y1="720" x2="530" y2="550" marker-end="url(#inherit)" />
+
+                <!-- ===== LEGEND ===== -->
+                <g transform="translate(20, 810)">
+                    <rect fill="#1e293b" stroke="#475569" stroke-width="1" rx="8" x="0" y="0" width="1060" height="85" />
+                    <text fill="#94a3b8" font-size="11" font-weight="600" x="20" y="20">LEGEND</text>
+
+                    <line x1="20" y1="40" x2="60" y2="40" stroke="#475569" stroke-width="1.2" />
+                    <polygon points="54,36 64,40 54,44" fill="#1e293b" stroke="#475569" stroke-width="1" />
+                    <text fill="#94a3b8" font-size="10" x="70" y="44">Inheritance</text>
+
+                    <line x1="180" y1="40" x2="220" y2="40" stroke="#475569" stroke-width="1.2" />
+                    <polygon points="180,36 170,40 180,44" fill="#475569" stroke="#475569" stroke-width="1" />
+                    <text fill="#94a3b8" font-size="10" x="228" y="44">Composition</text>
+
+                    <line x1="350" y1="40" x2="400" y2="40" stroke="#475569" stroke-width="1.2" />
+                    <polyline points="390,35 400,40 390,45" fill="none" stroke="#475569" stroke-width="1.2" />
+                    <text fill="#94a3b8" font-size="10" x="408" y="44">Association</text>
+
+                    <line x1="520" y1="40" x2="570" y2="40" stroke="#475569" stroke-width="1.2" stroke-dasharray="5,4" />
+                    <polyline points="560,35 570,40 560,45" fill="none" stroke="#475569" stroke-width="1.2" />
+                    <text fill="#94a3b8" font-size="10" x="578" y="44">Dependency (builds/creates)</text>
+
+                    <rect fill="#1e293b" stroke="#475569" stroke-width="1.2" rx="4" x="20" y="58" width="50" height="18" />
+                    <text fill="#e2e8f0" font-size="9" x="30" y="70">Class</text>
+
+                    <rect fill="#1e293b" stroke="#fb923c" stroke-width="1.2" rx="4" x="90" y="58" width="50" height="18" />
+                    <text fill="#fb923c" font-size="9" x="99" y="70">Enum</text>
+
+                    <text fill="#94a3b8" font-size="9" font-style="italic" x="160" y="70">&lt;&lt;abstract&gt;&gt; = Abstract class</text>
+
+                    <text fill="#94a3b8" font-size="9" x="350" y="70">0..* = Zero or more &nbsp;|&nbsp; 1 = Exactly one</text>
+                </g>
+            </svg>
+        </div>
+        <p class="diagram-caption">
+            Figure 1 — UML Class Diagram of the QuickGUI metamodel showing the inheritance hierarchy,
+            composition relationships, DSL builder layer, and enumeration types.
+        </p>
+    </section>
+
+    <!-- ============ SECTION 3: HIERARCHY ============ -->
+    <section id="hierarchy" class="reveal">
+        <div class="section-label">Section 3</div>
+        <h2>Inheritance Hierarchy</h2>
+        <p>
+            The metamodel is organized into a three-level inheritance tree rooted at the
+            abstract <code>GUIElement</code> class. This hierarchy cleanly separates <strong>containers</strong>
+            (which hold children) from <strong>widgets</strong> (leaf elements).
+        </p>
+
+        <div class="hierarchy">
+            <span class="abs">GUIElement</span> <span class="prop">(name: String)</span> <span class="branch">← abstract root</span><br>
+            <span class="branch">├──</span> <span class="cls">Window</span> <span class="prop">(title, width, height, layout, children)</span> <span class="branch">← top-level container</span><br>
+            <span class="branch">├──</span> <span class="cls">Panel</span> <span class="prop">(title, layout, borderTitle, children)</span> <span class="branch">← nested container</span><br>
+            <span class="branch">└──</span> <span class="abs">Widget</span> <span class="prop">(position)</span> <span class="branch">← abstract leaf base</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">Label</span> <span class="prop">(text: String)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">Button</span> <span class="prop">(label: String)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">TextField</span> <span class="prop">(columns: Integer, text: String)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">TextArea</span> <span class="prop">(rows, columns: Integer, scrollable: Boolean)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">CheckBox</span> <span class="prop">(label: String, selected: Boolean)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">ComboBox</span> <span class="prop">(items: List&lt;String&gt;, selectedIndex: Integer)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;├──</span> <span class="cls">Slider</span> <span class="prop">(min, max, value: Integer)</span><br>
+            <span class="branch">&nbsp;&nbsp;&nbsp;&nbsp;└──</span> <span class="cls">Separator</span> <span class="prop">(orientation)</span><br>
+            <br>
+            <span class="branch">Supporting types (internal):</span><br>
+            <span class="branch">├──</span> <span class="cls">Layout</span> <span class="prop">(type, rows, cols, hgap, vgap)</span><br>
+            <span class="branch">├──</span> <span class="enm">LayoutType</span> <span class="prop">{HORIZONTAL, VERTICAL, FLOW, GRID, BORDER}</span><br>
+            <span class="branch">└──</span> <span class="enm">Position</span> <span class="prop">{TOP, BOTTOM, LEFT, RIGHT, CENTER}</span>
+        </div>
+
+        <div class="callout">
+            <strong>Key Insight:</strong> Window and Panel are <em>both</em> containers that hold children, but they
+            are modeled as <strong>sibling subclasses</strong> of GUIElement rather than sharing a common
+            "Container" superclass. This is because Window is always the root (with unique properties like
+            size) while Panel is always nested, so merging them would add unnecessary complexity.
+        </div>
+    </section>
+
+    <!-- ============ SECTION 4: CLASS BREAKDOWN ============ -->
+    <section id="classes" class="reveal">
+        <div class="section-label">Section 4</div>
+        <h2>Class-by-Class Breakdown</h2>
+
+        <h3>4.1 &mdash; Abstract Classes</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon" style="background:rgba(167,139,250,0.15); color:var(--accent3);">A</div>
+                <h4>GUIElement <span style="color:var(--text-muted); font-weight:400; font-size:0.85rem;">&laquo;abstract&raquo;</span></h4>
+                <p>
+                    The root of the entire metamodel hierarchy. Every node in a GUI model — whether a container or a leaf widget —
+                    inherits from GUIElement. It provides the universal <code>name</code> attribute (an identifier for referencing)
+                    and declares the abstract <code>accept(GUIVisitor)</code> method for the Visitor pattern.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(167,139,250,0.15); color:var(--accent3);">A</div>
+                <h4>Widget <span style="color:var(--text-muted); font-weight:400; font-size:0.85rem;">&laquo;abstract&raquo;</span></h4>
+                <p>
+                    The abstract base for all <em>leaf</em> elements — UI controls that do not contain other elements.
+                    Adds an optional <code>position</code> attribute (a Position enum value) for layout placement
+                    within border-layout containers. All 8 concrete widget types extend this class.
+                </p>
+            </div>
+        </div>
+
+        <h3>4.2 &mdash; Container Classes</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon" style="background:rgba(56,189,248,0.15); color:var(--accent);">W</div>
+                <h4>Window</h4>
+                <p>
+                    The top-level container and the root of every GUI model tree. Has a <code>title</code>,
+                    <code>width</code>/<code>height</code> dimensions, a <code>Layout</code> configuration,
+                    and an ordered list of <code>GUIElement</code> children. Every QuickGUI program produces
+                    exactly one Window. It is always the entry point for interpretation and code generation.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(56,189,248,0.15); color:var(--accent);">P</div>
+                <h4>Panel</h4>
+                <p>
+                    A nested container used for grouping related widgets. Has its own <code>Layout</code>,
+                    an optional <code>borderTitle</code> (rendered as a titled border in Swing), and an
+                    ordered list of <code>GUIElement</code> children. Panels can nest inside other panels
+                    to create arbitrarily deep hierarchies.
+                </p>
+            </div>
+        </div>
+
+        <h3>4.3 &mdash; Concrete Widget Classes</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">L</div>
+                <h4>Label</h4>
+                <p>A static text display widget. Stores a <code>text</code> string to show to the user. Read-only; no user interaction.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">B</div>
+                <h4>Button</h4>
+                <p>A clickable widget. Stores a <code>label</code> string displayed on the button face. Fires an action when clicked.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">TF</div>
+                <h4>TextField</h4>
+                <p>A single-line text input. Configurable <code>columns</code> width and optional default <code>text</code>.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">TA</div>
+                <h4>TextArea</h4>
+                <p>A multi-line text input. Has <code>rows</code>, <code>columns</code> dimensions, and a <code>scrollable</code> flag.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">CB</div>
+                <h4>CheckBox</h4>
+                <p>A boolean toggle control. Stores a <code>label</code> and a <code>selected</code> boolean state.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">CX</div>
+                <h4>ComboBox</h4>
+                <p>A dropdown selection widget. Holds a list of <code>items</code> (strings) and a <code>selectedIndex</code>.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">S</div>
+                <h4>Slider</h4>
+                <p>A range selection widget. Defined by <code>min</code>, <code>max</code>, and current <code>value</code> integers.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(74,222,128,0.15); color:var(--green);">—</div>
+                <h4>Separator</h4>
+                <p>A visual divider line (horizontal or vertical). Has no interactive behavior — purely structural.</p>
+            </div>
+        </div>
+
+        <h3>4.4 &mdash; Supporting Configuration Class</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon" style="background:rgba(251,146,60,0.15); color:var(--orange);">⚙</div>
+                <h4>Layout</h4>
+                <p>
+                    A configuration object that specifies <em>how</em> a container arranges its children.
+                    Contains a <code>LayoutType</code> enum, optional <code>rows</code>/<code>cols</code>
+                    for grid layouts, and <code>hgap</code>/<code>vgap</code> spacing. Not exposed in the DSL —
+                    the framework assigns layouts automatically (defaulting to VERTICAL stacking).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 5: RELATIONSHIPS ============ -->
+    <section id="relationships" class="reveal">
+        <div class="section-label">Section 5</div>
+        <h2>Relationships &amp; Associations</h2>
+        <p>
+            The diagram encodes five distinct types of UML relationships. Each relationship type
+            carries specific semantic meaning about how classes interact.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Target</th>
+                        <th>Type</th>
+                        <th>Multiplicity</th>
+                        <th>Semantic Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GUIElement</td>
+                        <td>Window</td>
+                        <td><span class="tag tag-inherit">Inheritance</span></td>
+                        <td>—</td>
+                        <td>Window IS-A GUIElement (top-level container)</td>
+                    </tr>
+                    <tr>
+                        <td>GUIElement</td>
+                        <td>Panel</td>
+                        <td><span class="tag tag-inherit">Inheritance</span></td>
+                        <td>—</td>
+                        <td>Panel IS-A GUIElement (nested container)</td>
+                    </tr>
+                    <tr>
+                        <td>GUIElement</td>
+                        <td>Widget</td>
+                        <td><span class="tag tag-inherit">Inheritance</span></td>
+                        <td>—</td>
+                        <td>Widget IS-A GUIElement (abstract leaf base)</td>
+                    </tr>
+                    <tr>
+                        <td>Widget</td>
+                        <td>Label, Button, TextField, TextArea, CheckBox, ComboBox, Slider, Separator</td>
+                        <td><span class="tag tag-inherit">Inheritance</span></td>
+                        <td>—</td>
+                        <td>Each concrete widget IS-A Widget</td>
+                    </tr>
+                    <tr>
+                        <td>Window</td>
+                        <td>GUIElement</td>
+                        <td><span class="tag tag-compose">Composition</span></td>
+                        <td>1 → 0..*</td>
+                        <td>Window CONTAINS zero or more child elements</td>
+                    </tr>
+                    <tr>
+                        <td>Panel</td>
+                        <td>GUIElement</td>
+                        <td><span class="tag tag-compose">Composition</span></td>
+                        <td>1 → 0..*</td>
+                        <td>Panel CONTAINS zero or more child elements</td>
+                    </tr>
+                    <tr>
+                        <td>Window</td>
+                        <td>Layout</td>
+                        <td><span class="tag tag-compose">Composition</span></td>
+                        <td>1 → 1</td>
+                        <td>Window HAS exactly one Layout configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Panel</td>
+                        <td>Layout</td>
+                        <td><span class="tag tag-compose">Composition</span></td>
+                        <td>1 → 1</td>
+                        <td>Panel HAS exactly one Layout configuration</td>
+                    </tr>
+                    <tr>
+                        <td>Layout</td>
+                        <td>LayoutType</td>
+                        <td><span class="tag tag-assoc">Association</span></td>
+                        <td>1 → 1</td>
+                        <td>Layout USES a LayoutType enum value</td>
+                    </tr>
+                    <tr>
+                        <td>Widget</td>
+                        <td>Position</td>
+                        <td><span class="tag tag-assoc">Association</span></td>
+                        <td>0..1 → 0..1</td>
+                        <td>Widget MAY have a positional constraint</td>
+                    </tr>
+                    <tr>
+                        <td>GUI</td>
+                        <td>WindowBuilder</td>
+                        <td><span class="tag tag-depend">Dependency</span></td>
+                        <td>—</td>
+                        <td>GUI.window() CREATES a WindowBuilder</td>
+                    </tr>
+                    <tr>
+                        <td>WindowBuilder</td>
+                        <td>Window</td>
+                        <td><span class="tag tag-build">Builds</span></td>
+                        <td>—</td>
+                        <td>WindowBuilder CONSTRUCTS a Window model</td>
+                    </tr>
+                    <tr>
+                        <td>PanelBuilder</td>
+                        <td>Panel</td>
+                        <td><span class="tag tag-build">Builds</span></td>
+                        <td>—</td>
+                        <td>PanelBuilder CONSTRUCTS a Panel model</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 6: MULTIPLICITIES ============ -->
+    <section id="multiplicity" class="reveal">
+        <div class="section-label">Section 6</div>
+        <h2>Multiplicity Analysis</h2>
+        <p>
+            The multiplicities on relationships define the structural constraints of valid GUI models.
+            They express the cardinality rules that every well-formed model must satisfy.
+        </p>
+
+        <div class="mult-visual">
+            <div class="mult-item">
+                <div class="mult-label">Container → Children (Composition)</div>
+                <div class="mult-boxes">
+                    <div class="mult-box" style="background:rgba(56,189,248,0.12); color:var(--accent);">Window</div>
+                    <div class="mult-line" data-label="1 → 0..*"></div>
+                    <div class="mult-box" style="background:rgba(56,189,248,0.12); color:var(--accent);">GUIElement</div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+                    Exactly one container owns zero or more children. Children cannot exist without a parent.
+                </p>
+            </div>
+            <div class="mult-item">
+                <div class="mult-label">Container → Layout (Composition)</div>
+                <div class="mult-boxes">
+                    <div class="mult-box" style="background:rgba(74,222,128,0.12); color:var(--green);">Window / Panel</div>
+                    <div class="mult-line" data-label="1 → 1"></div>
+                    <div class="mult-box" style="background:rgba(74,222,128,0.12); color:var(--green);">Layout</div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+                    Every container has exactly one layout. The layout cannot be shared or orphaned.
+                </p>
+            </div>
+            <div class="mult-item">
+                <div class="mult-label">Layout → LayoutType (Association)</div>
+                <div class="mult-boxes">
+                    <div class="mult-box" style="background:rgba(251,146,60,0.12); color:var(--orange);">Layout</div>
+                    <div class="mult-line" data-label="1 → 1"></div>
+                    <div class="mult-box" style="background:rgba(251,146,60,0.12); color:var(--orange);">LayoutType</div>
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+                    Each layout references exactly one layout type enum value (VERTICAL, HORIZONTAL, etc.).
+                </p>
+            </div>
+        </div>
+
+        <div class="callout green">
+            <strong>Composition vs. Association:</strong> The filled diamond (♦) denotes <em>composition</em> — the child's
+            lifecycle is bound to the parent. When a Window is destroyed, its children and layout are destroyed too.
+            The open arrow (→) denotes <em>association</em> — a reference to a shared or independent value (like an enum constant).
+        </div>
+    </section>
+
+    <!-- ============ SECTION 7: ENUMERATIONS ============ -->
+    <section id="enums" class="reveal">
+        <div class="section-label">Section 7</div>
+        <h2>Enumeration Types</h2>
+        <p>
+            The metamodel uses two enumeration types — both are internal (not exposed to DSL users).
+            They constrain configuration values to a fixed set of valid options.
+        </p>
+
+        <div class="enum-row">
+            <div class="enum-card">
+                <h4>&laquo;enumeration&raquo; LayoutType</h4>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                    Defines the strategy a container uses to arrange its children:
+                </p>
+                <span class="enum-val">HORIZONTAL</span>
+                <span class="enum-val">VERTICAL</span>
+                <span class="enum-val">FLOW</span>
+                <span class="enum-val">GRID</span>
+                <span class="enum-val">BORDER</span>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.75rem;">
+                    Maps to Java Swing layout managers: BoxLayout (Y/X), FlowLayout, GridLayout, BorderLayout.
+                    Default is <strong>VERTICAL</strong> (stack top-to-bottom).
+                </p>
+            </div>
+            <div class="enum-card">
+                <h4>&laquo;enumeration&raquo; Position</h4>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                    Positional constraint for widgets inside a BorderLayout container:
+                </p>
+                <span class="enum-val">TOP</span>
+                <span class="enum-val">BOTTOM</span>
+                <span class="enum-val">LEFT</span>
+                <span class="enum-val">RIGHT</span>
+                <span class="enum-val">CENTER</span>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.75rem;">
+                    Maps directly to BorderLayout.NORTH, SOUTH, WEST, EAST, CENTER. Optional — only meaningful
+                    when the parent uses BORDER layout.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 8: DESIGN PATTERNS ============ -->
+    <section id="patterns" class="reveal">
+        <div class="section-label">Section 8</div>
+        <h2>Design Patterns</h2>
+        <p>
+            The metamodel employs four well-known design patterns, each serving a specific architectural purpose.
+            Together they provide extensibility, type safety, and clean separation of concerns.
+        </p>
+
+        <div class="pattern-grid">
+            <div class="pattern-card composite">
+                <div class="pattern-name" style="color:var(--accent);">Composite Pattern</div>
+                <p>
+                    Window and Panel act as <strong>composites</strong> that hold an ordered list of <code>GUIElement</code>
+                    children. Widgets are <strong>leaves</strong>. This enables a uniform tree structure where containers
+                    and widgets are treated polymorphically, allowing Panels to nest inside other Panels to any depth.
+                </p>
+                <div class="involved">Classes: GUIElement, Window, Panel, Widget (and subclasses)</div>
+            </div>
+            <div class="pattern-card visitor">
+                <div class="pattern-name" style="color:var(--green);">Visitor Pattern</div>
+                <p>
+                    The <code>GUIVisitor</code> interface declares <code>visit()</code> overloads for each concrete
+                    element type. Each GUIElement implements <code>accept(GUIVisitor)</code> to dispatch to the correct
+                    visitor method. This decouples <em>what we do</em> with the model from <em>what the model is</em> —
+                    new semantics can be added without modifying any model class.
+                </p>
+                <div class="involved">Classes: GUIVisitor, SwingInterpreter, JavaCodeGenerator, all GUIElements</div>
+            </div>
+            <div class="pattern-card builder">
+                <div class="pattern-name" style="color:var(--orange);">Builder Pattern</div>
+                <p>
+                    <code>WindowBuilder</code> and <code>PanelBuilder</code> implement the Builder pattern to
+                    construct complex model objects step-by-step through a fluent method-chaining API. The builders
+                    accumulate configuration calls and produce the final Window/Panel via terminal operations
+                    (<code>.build()</code>, <code>.show()</code>).
+                </p>
+                <div class="involved">Classes: GUI, WindowBuilder, PanelBuilder, ContainerBuilder</div>
+            </div>
+            <div class="pattern-card crtp">
+                <div class="pattern-name" style="color:var(--pink);">CRTP (Curiously Recurring Template Pattern)</div>
+                <p>
+                    <code>ContainerBuilder&lt;SELF&gt;</code> uses a type parameter bound to the concrete builder type.
+                    This ensures that fluent methods like <code>.label()</code> return the correct builder type
+                    (<code>WindowBuilder</code> or <code>PanelBuilder</code>) rather than the abstract base — enabling
+                    type-safe chaining without casts.
+                </p>
+                <div class="involved">Classes: ContainerBuilder&lt;SELF&gt;, WindowBuilder, PanelBuilder</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 9: DSL LAYER ============ -->
+    <section id="dsl" class="reveal">
+        <div class="section-label">Section 9</div>
+        <h2>DSL Builder Layer</h2>
+        <p>
+            The builder classes form the <em>concrete syntax</em> of the DSL — they translate fluent Java method
+            chains into metamodel instances. The diagram shows the builder layer as a separate concern
+            connected to the metamodel via <em>dependency</em> (dashed arrow) and <em>builds</em> relationships.
+        </p>
+
+        <h3>Builder Architecture</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot-row">
+                    <span style="background:#f87171"></span>
+                    <span style="background:#facc15"></span>
+                    <span style="background:#4ade80"></span>
+                </div>
+                Builder class hierarchy
+            </div>
+            <pre>
+<span class="cmt">// Abstract base — shared widget-adding API via CRTP</span>
+<span class="kw">public abstract class</span> <span class="type">ContainerBuilder</span>&lt;<span class="type">SELF</span> <span class="kw">extends</span> <span class="type">ContainerBuilder</span>&lt;<span class="type">SELF</span>&gt;&gt; {
+    <span class="kw">protected abstract</span> <span class="type">SELF</span> <span class="meth">self</span>();
+    <span class="kw">protected abstract void</span> <span class="meth">addChildToModel</span>(<span class="type">GUIElement</span> child);
+
+    <span class="kw">public</span> <span class="type">SELF</span> <span class="meth">label</span>(<span class="type">String</span> text)    { <span class="cmt">/* add Label model */</span> }
+    <span class="kw">public</span> <span class="type">SELF</span> <span class="meth">button</span>(<span class="type">String</span> text)   { <span class="cmt">/* add Button model */</span> }
+    <span class="kw">public</span> <span class="type">SELF</span> <span class="meth">textField</span>(...)        { <span class="cmt">/* add TextField model */</span> }
+    <span class="cmt">// ... all widget methods return SELF for chaining</span>
+
+    <span class="kw">public</span> <span class="type">PanelBuilder</span>&lt;<span class="type">SELF</span>&gt; <span class="meth">panel</span>(<span class="type">String</span> title) {
+        <span class="kw">return new</span> <span class="type">PanelBuilder</span>&lt;&gt;(title, <span class="meth">self</span>(), <span class="kw">this</span>::addChildToModel);
+    }
+}
+
+<span class="cmt">// Concrete — builds Window models</span>
+<span class="kw">public class</span> <span class="type">WindowBuilder</span> <span class="kw">extends</span> <span class="type">ContainerBuilder</span>&lt;<span class="type">WindowBuilder</span>&gt; {
+    <span class="kw">public</span> <span class="type">WindowBuilder</span> <span class="meth">size</span>(<span class="kw">int</span> w, <span class="kw">int</span> h) { ... }
+    <span class="kw">public</span> <span class="type">Window</span>        <span class="meth">build</span>()              { ... }  <span class="cmt">// terminal</span>
+    <span class="kw">public</span> <span class="type">Window</span>        <span class="meth">show</span>()               { ... }  <span class="cmt">// terminal</span>
+    <span class="kw">public</span> <span class="type">String</span>        <span class="meth">generateCode</span>(...)    { ... }  <span class="cmt">// terminal</span>
+}
+</pre>
+        </div>
+
+        <h3>How the DSL Constructs Models</h3>
+        <p>
+            Each fluent method call in the DSL creates a metamodel object and adds it to the current container:
+        </p>
+        <ol>
+            <li><code>GUI.window("Login")</code> — Creates a new <code>WindowBuilder</code> wrapping a fresh <code>Window</code> model object</li>
+            <li><code>.label("text")</code> — Creates a <code>Label</code> model and adds it to the window's children list</li>
+            <li><code>.panel("Form")</code> — Creates a <code>PanelBuilder</code> wrapping a new <code>Panel</code>; switches the active builder context</li>
+            <li><code>.endPanel()</code> — Adds the completed <code>Panel</code> to the parent's children and returns the parent builder</li>
+            <li><code>.show()</code> — Terminal operation: triggers the <code>SwingInterpreter</code> visitor to render the model as a live GUI</li>
+        </ol>
+
+        <h3>DSL Usage Example</h3>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot-row">
+                    <span style="background:#f87171"></span>
+                    <span style="background:#facc15"></span>
+                    <span style="background:#4ade80"></span>
+                </div>
+                LoginFormExample.java
+            </div>
+            <pre>
+<span class="type">GUI</span>.<span class="meth">window</span>(<span class="str">"Login"</span>)
+   .<span class="meth">size</span>(<span class="num">350</span>, <span class="num">250</span>)
+   .<span class="meth">label</span>(<span class="str">"Please sign in"</span>)
+   .<span class="meth">panel</span>(<span class="str">"Form"</span>)                <span class="cmt">// → PanelBuilder (context switch)</span>
+       .<span class="meth">label</span>(<span class="str">"Username:"</span>)
+       .<span class="meth">textField</span>(<span class="str">"username"</span>)
+       .<span class="meth">label</span>(<span class="str">"Password:"</span>)
+       .<span class="meth">textField</span>(<span class="str">"password"</span>)
+       .<span class="meth">checkBox</span>(<span class="str">"Remember me"</span>)
+   .<span class="meth">endPanel</span>()                   <span class="cmt">// → WindowBuilder (back to parent)</span>
+   .<span class="meth">button</span>(<span class="str">"Login"</span>)
+   .<span class="meth">button</span>(<span class="str">"Cancel"</span>)
+   .<span class="meth">show</span>();                      <span class="cmt">// terminal → live Swing GUI</span>
+</pre>
+        </div>
+
+        <div class="callout orange">
+            <strong>DSL Design Constraint:</strong> Every DSL method accepts <em>only strings and numbers</em> —
+            no Java-specific types, enums, lambdas, or layout managers appear in the API surface.
+            Layout and positioning are handled automatically by the framework, keeping the DSL minimal and
+            accessible.
+        </div>
+    </section>
+
+    <!-- ============ SECTION 10: SEMANTICS ============ -->
+    <section id="semantics" class="reveal">
+        <div class="section-label">Section 10</div>
+        <h2>Semantics Layer (Visitor-Based)</h2>
+        <p>
+            The Visitor pattern completely decouples model <em>structure</em> from model <em>meaning</em>.
+            Two concrete visitors provide independent semantics for the same metamodel:
+        </p>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon" style="background:rgba(34,211,238,0.15); color:var(--cyan);">▶</div>
+                <h4>SwingInterpreter</h4>
+                <p>
+                    Walks the model tree and <strong>interprets</strong> it by creating live Java Swing components.
+                    Each <code>visit()</code> method maps a model element to its corresponding Swing widget
+                    (e.g., <code>Window</code> → <code>JFrame</code>, <code>Button</code> → <code>JButton</code>).
+                    The visitor recursively processes container children to build the complete UI.
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon" style="background:rgba(34,211,238,0.15); color:var(--cyan);">⟨/⟩</div>
+                <h4>JavaCodeGenerator</h4>
+                <p>
+                    Walks the model tree and <strong>generates</strong> standalone, compilable Java source code.
+                    Each <code>visit()</code> method emits the Swing API calls needed to reproduce the GUI.
+                    The output is a self-contained <code>.java</code> file that can be compiled and run independently.
+                </p>
+            </div>
+        </div>
+
+        <div class="callout">
+            <strong>Open for Extension:</strong> Adding a new semantics (e.g., an HTML renderer, a FXML exporter, or a
+            validation visitor) requires only implementing the <code>GUIVisitor</code> interface — no modifications
+            to any model class are needed. This is the core benefit of the Visitor pattern in this architecture.
+        </div>
+    </section>
+
+    <!-- ============ SECTION 11: MAPPING ============ -->
+    <section id="mapping" class="reveal">
+        <div class="section-label">Section 11</div>
+        <h2>Metamodel-to-Implementation Mapping</h2>
+        <p>
+            Every concept in the class diagram maps directly to a Java source file in the project.
+            The mapping is one-to-one — each metamodel class corresponds to exactly one Java file.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metamodel Concept</th>
+                        <th>Java Class</th>
+                        <th>Package</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GUIElement</td>
+                        <td><code>GUIElement.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Abstract root of all model nodes</td>
+                    </tr>
+                    <tr>
+                        <td>Window</td>
+                        <td><code>Window.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Top-level container</td>
+                    </tr>
+                    <tr>
+                        <td>Panel</td>
+                        <td><code>Panel.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Nested container</td>
+                    </tr>
+                    <tr>
+                        <td>Widget</td>
+                        <td><code>Widget.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Abstract leaf base</td>
+                    </tr>
+                    <tr>
+                        <td>Label, Button, TextField, TextArea, CheckBox, ComboBox, Slider, Separator</td>
+                        <td><code>{Name}.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Concrete widget types</td>
+                    </tr>
+                    <tr>
+                        <td>Layout</td>
+                        <td><code>Layout.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Layout configuration</td>
+                    </tr>
+                    <tr>
+                        <td>LayoutType</td>
+                        <td><code>LayoutType.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Layout strategy enum</td>
+                    </tr>
+                    <tr>
+                        <td>Position</td>
+                        <td><code>Position.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Positional constraint enum</td>
+                    </tr>
+                    <tr>
+                        <td>GUI (entry point)</td>
+                        <td><code>GUI.java</code></td>
+                        <td><code>quickgui.dsl</code></td>
+                        <td>DSL entry: <code>GUI.window()</code></td>
+                    </tr>
+                    <tr>
+                        <td>WindowBuilder</td>
+                        <td><code>WindowBuilder.java</code></td>
+                        <td><code>quickgui.dsl</code></td>
+                        <td>Fluent builder for Window</td>
+                    </tr>
+                    <tr>
+                        <td>PanelBuilder</td>
+                        <td><code>PanelBuilder.java</code></td>
+                        <td><code>quickgui.dsl</code></td>
+                        <td>Fluent builder for Panel</td>
+                    </tr>
+                    <tr>
+                        <td>GUIVisitor</td>
+                        <td><code>GUIVisitor.java</code></td>
+                        <td><code>quickgui.model</code></td>
+                        <td>Visitor interface</td>
+                    </tr>
+                    <tr>
+                        <td>SwingInterpreter</td>
+                        <td><code>SwingInterpreter.java</code></td>
+                        <td><code>quickgui.interpreter</code></td>
+                        <td>Live GUI rendering</td>
+                    </tr>
+                    <tr>
+                        <td>JavaCodeGenerator</td>
+                        <td><code>JavaCodeGenerator.java</code></td>
+                        <td><code>quickgui.codegen</code></td>
+                        <td>Source code generation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 12: SUMMARY ============ -->
+    <section class="reveal">
+        <div class="section-label">Summary</div>
+        <h2>Key Takeaways</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>🏗️ Three-Layer Architecture</h4>
+                <p>The metamodel (abstract syntax), DSL builders (concrete syntax), and visitors (semantics) form
+                   cleanly separated layers. Each can evolve independently.</p>
+            </div>
+            <div class="card">
+                <h4>🌳 Composite Tree Structure</h4>
+                <p>GUI models form a tree: Window at the root, Panels as interior nodes, and Widgets as leaves.
+                   The Composite pattern enables uniform traversal and arbitrary nesting depth.</p>
+            </div>
+            <div class="card">
+                <h4>🔌 Open Extension via Visitor</h4>
+                <p>New semantics (interpretation, code generation, validation, export) can be added by implementing
+                   the GUIVisitor interface — no model modifications needed.</p>
+            </div>
+            <div class="card">
+                <h4>🔗 Type-Safe Fluent API</h4>
+                <p>The CRTP-based builder hierarchy ensures that method chains are type-checked at compile time.
+                   You cannot call <code>.show()</code> inside a panel or <code>.endPanel()</code> at the window level.</p>
+            </div>
+            <div class="card">
+                <h4>📐 Strings & Numbers Only</h4>
+                <p>The DSL surface accepts only primitive types — no Java-specific enums, lambdas, or layout managers.
+                   Implementation complexity is hidden behind the fluent API.</p>
+            </div>
+            <div class="card">
+                <h4>⚙️ Automatic Layout</h4>
+                <p>Layout is an internal concern, not exposed to DSL users. Containers default to VERTICAL stacking,
+                   making the DSL simple while the framework handles the visual arrangement.</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p>QuickGUI Metamodel Analysis &mdash; Model-Driven Engineering &mdash; February 2026</p>
+</footer>
+
+<!-- ===== SCROLL REVEAL ANIMATION ===== -->
+<script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.08 });
+    reveals.forEach(r => observer.observe(r));
+</script>
+
+</body>
+</html>
