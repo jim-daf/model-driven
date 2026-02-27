@@ -1,11 +1,9 @@
 package quickgui.model;
 
-/**
- * Meta-model: Abstract superclass for all leaf widgets (non-containers).
- */
+// Superclass for leaf widgets (stuff that isn't a container like Window/Panel).
 public abstract class Widget extends GUIElement {
-    private Position position; // optional BorderLayout position
-    private String tooltip;
+    private Position position; // where it goes if parent uses BorderLayout
+    private String tooltip;    // hover text (can be null)
 
     protected Widget(String name) {
         super(name);

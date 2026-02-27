@@ -1,25 +1,16 @@
 package quickgui.model;
 
-/**
- * High-level layout specification for containers (Window, Panel).
- *
- * Designed so that DSL users never need to think about Swing layout managers.
- * Instead they pick a readable constant or factory and optionally set spacing:
- *
- *   Layout.VERTICAL              - stack children top-to-bottom
- *   Layout.HORIZONTAL            - place children side by side
- *   Layout.FLOW                  - wrap children left-to-right
- *   Layout.BORDER                - five regions (NORTH, SOUTH, EAST, WEST, CENTER)
- *   Layout.grid(rows, cols)      - fixed grid
- *   Layout.columns(n)            - single-row grid with n columns
- *
- * Spacing:
- *   Layout.HORIZONTAL.withGap(10)        - uniform gap
- *   Layout.grid(3, 2).withGap(5, 10)     - horizontal & vertical gap
- */
+// Represents a layout choice for containers. The user can pick from
+// some predefined ones (VERTICAL, FLOW, etc.) or create a grid.
+// Also supports setting gaps between elements.
+//
+// Examples:
+//   Layout.VERTICAL           - stack stuff top to bottom
+//   Layout.grid(3, 2)         - 3 rows, 2 columns
+//   Layout.FLOW.withGap(10)   - flow layout with 10px gaps
 public class Layout {
 
-    /* -- internal state (kept package-visible for interpreter/codegen) -- */
+    // internal fields
 
     private final LayoutType type;
     private int rows;
@@ -31,27 +22,16 @@ public class Layout {
         this.type = type;
     }
 
-    /* ---------------------------------------------------------
-     *  Pre-built constants -- the simplest way to pick a layout
-     * --------------------------------------------------------- */
+    // ready-made layout constants
 
-    /** Stack children top-to-bottom. */
     public static final Layout VERTICAL   = new Layout(LayoutType.VERTICAL);
-
-    /** Place children side by side, left-to-right. */
     public static final Layout HORIZONTAL = new Layout(LayoutType.HORIZONTAL);
-
-    /** Children flow left-to-right and wrap to the next row when full. */
     public static final Layout FLOW       = new Layout(LayoutType.FLOW);
-
-    /** Five named regions: NORTH, SOUTH, EAST, WEST, CENTER. */
     public static final Layout BORDER     = new Layout(LayoutType.BORDER);
 
-    /* ---------------------------------------------------------
-     *  Factory methods -- for layouts that need parameters
-     * --------------------------------------------------------- */
+    // factory methods for layouts that need extra params
 
-    /** Fixed grid with the given number of rows and columns. */
+    // makes a grid with given rows and cols
     public static Layout grid(int rows, int cols) {
         Layout l = new Layout(LayoutType.GRID);
         l.rows = rows;
@@ -59,24 +39,18 @@ public class Layout {
         return l;
     }
 
-    /** Convenience: single-row grid with {@code n} columns. */
+    // shortcut: 1 row with n columns
     public static Layout columns(int n) {
         return grid(0, n);
     }
 
-    /* ---------------------------------------------------------
-     *  Spacing modifier -- chain after a constant or factory
-     *
-     *  Layout.BORDER.withGap(5)
-     *  Layout.grid(3, 2).withGap(5, 10)
-     * --------------------------------------------------------- */
+    // gap modifier - can chain it after any layout like Layout.BORDER.withGap(5)
 
-    /** Set uniform spacing between elements. */
     public Layout withGap(int gap) {
         return withGap(gap, gap);
     }
 
-    /** Set horizontal and vertical spacing separately. */
+    // separate h and v gaps
     public Layout withGap(int hgap, int vgap) {
         Layout copy = new Layout(this.type);
         copy.rows  = this.rows;
@@ -86,9 +60,7 @@ public class Layout {
         return copy;
     }
 
-    /* ---------------------------------------------------------
-     *  Getters (used by SwingInterpreter & JavaCodeGenerator)
-     * --------------------------------------------------------- */
+    // getters (used by the interpreter and code generator)
 
     public LayoutType getType() { return type; }
     public int getRows()  { return rows; }

@@ -2,14 +2,8 @@ package quickgui.dsl;
 
 import quickgui.model.*;
 
-/**
- * Fluent builder for constructing a Panel model node.
- *
- * A PanelBuilder can add children just like a WindowBuilder.
- * It has an endPanel() method to return to the parent builder.
- *
- * @param <P> the type of the parent builder (for fluent return)
- */
+// Builder for panels. Works the same as WindowBuilder for adding children,
+// but has endPanel() to go back to the parent builder.
 public class PanelBuilder<P> extends ContainerBuilder<PanelBuilder<P>> {
     private final Panel panel;
     private final P parent;
@@ -32,12 +26,7 @@ public class PanelBuilder<P> extends ContainerBuilder<PanelBuilder<P>> {
         panel.addChild(child, null);
     }
 
-    /* --- end panel and return to parent --- */
-
-    /**
-     * Finalize this panel, add it to the parent container, and return
-     * to the parent builder for further configuration.
-     */
+    // close this panel and go back to whatever we were building before
     public P endPanel() {
         addToParent.accept(panel);
         return parent;

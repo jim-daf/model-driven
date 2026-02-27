@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: CheckBox — boolean toggle widget.
- */
+// Checkbox - on or off, simple as that.
 public class CheckBox extends Widget {
     private final String label;
     private boolean selected;

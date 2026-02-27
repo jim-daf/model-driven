@@ -1,9 +1,7 @@
 package quickgui.model;
 
-/**
- * Visitor interface for traversing the GUI meta-model.
- * Used by the SwingInterpreter and the JavaCodeGenerator.
- */
+// Visitor interface - both the interpreter and code generator implement this
+// to walk through the model tree.
 public interface GUIVisitor {
     void visit(Window window);
     void visit(Panel panel);

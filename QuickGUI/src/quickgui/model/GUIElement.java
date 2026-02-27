@@ -1,11 +1,7 @@
 package quickgui.model;
 
-/**
- * Root of the meta-model hierarchy.
- * Every element in a GUI has a name (identifier) used for referencing.
- *
- * Meta-model concept: GUIElement is the abstract supertype for all model nodes.
- */
+// Base class for everything in our GUI model.
+// Each element gets a name so we can refer to it later.
 public abstract class GUIElement {
     private final String name;
 
@@ -17,6 +13,6 @@ public abstract class GUIElement {
         return name;
     }
 
-    /** Accept a visitor (used by interpreter and code generator). */
+    // visitor pattern hook
     public abstract void accept(GUIVisitor visitor);
 }

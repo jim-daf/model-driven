@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Meta-model: Window — the top-level container.
- *
- * A Window has a title, optional size, and contains child GUIElements
- * arranged according to a LayoutSpec.
- */
+// The top-level window. Has a title, size, layout, and holds all the child elements.
 public class Window extends GUIElement {
     private final String title;
     private int width = 400;
     private int height = 300;
     private Layout layout = Layout.VERTICAL;
     private final List<GUIElement> children = new ArrayList<>();
-    /** Position constraints for children (parallel list, may contain null). */
+    // keeps track of where each child goes (null = no specific position)
     private final List<Position> positions = new ArrayList<>();
 
     public Window(String title) {

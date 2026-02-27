@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: Label — static text display.
- */
+// Just a text label, nothing fancy.
 public class Label extends Widget {
     private final String text;
 

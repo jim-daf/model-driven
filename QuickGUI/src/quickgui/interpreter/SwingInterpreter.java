@@ -22,28 +22,16 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Interpreter: walks the GUI meta-model and produces a live Swing window.
- *
- * Implements the GUIVisitor to traverse the model tree and create
- * corresponding javax.swing components.
- */
+// This is the interpreter. It takes our model and turns it into actual Swing components.
+// Uses the visitor pattern to go through each element in the tree.
 public class SwingInterpreter implements GUIVisitor {
 
-    /** The Swing component most recently constructed by a visit() call. */
+    // holds the last Swing component we built (visitor sets this)
     private JComponent currentComponent;
 
-    /**
-     * Interpret a Window model: create and display the Swing JFrame.
-     *
-     * When the user has not specified an explicit layout (i.e. the default
-     * VERTICAL layout is still in effect), the interpreter applies an
-     * automatic layout strategy that analyses the window's children and
-     * assigns BorderLayout regions intelligently:
-     *   - Leading labels   → NORTH
-     *   - Trailing buttons  → SOUTH  (wrapped in FlowLayout)
-     *   - Remaining content → CENTER (with smart TextArea handling)
-     */
+    // Main method - takes a Window model and creates the actual JFrame.
+    // If the user didn't set a specific layout, we try to figure out a
+    // good layout automatically (labels go to the top, buttons to the bottom, etc.)
     public void interpret(Window window) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame(window.getTitle());
@@ -64,11 +52,11 @@ public class SwingInterpreter implements GUIVisitor {
         });
     }
 
-    // ───────── Visitor methods ─────────
+    // --- visitor methods (one for each widget type) ---
 
     @Override
     public void visit(Window window) {
-        // top-level is handled by interpret()
+        // nothing here, window is handled in interpret()
     }
 
     @Override
@@ -77,7 +65,7 @@ public class SwingInterpreter implements GUIVisitor {
         JPanel jp;
 
         if (panel.getLayout() == Layout.VERTICAL) {
-            // Auto-detect the best layout for the panel's content
+            // try to pick the best layout based on what's inside the panel
             if (isFormLike(children)) {
                 jp = buildFormPanel(children);
             } else if (isToolbarLike(children)) {
@@ -173,9 +161,9 @@ public class SwingInterpreter implements GUIVisitor {
         currentComponent = new JSeparator(orientation);
     }
 
-    // ───────── auto-layout engine ─────────
+    // --- auto-layout logic ---
 
-    /** True when every position in the list is null (no user-specified positions). */
+    // checks if user set any positions manually
     private boolean hasNoExplicitPositions(List<Position> positions) {
         for (Position p : positions) {
             if (p != null) return false;
@@ -183,15 +171,14 @@ public class SwingInterpreter implements GUIVisitor {
         return true;
     }
 
-    /**
-     * Automatically assign BorderLayout regions for a window based on its
-     * children.  Leading labels become the NORTH header, trailing buttons
-     * become the SOUTH footer, and everything else goes to CENTER.
-     */
+    // Figures out the layout automatically for a window:
+    // - labels at the start go to the top (NORTH)
+    // - buttons at the end go to the bottom (SOUTH)
+    // - everything in between goes to CENTER
     private void applyAutoWindowLayout(JFrame frame, Window window) {
         List<GUIElement> children = window.getChildren();
 
-        // --- classify children into three zones ---
+        // split children into header (labels), center (panels etc), footer (buttons)
         int headerEnd = 0;
         while (headerEnd < children.size()
                 && children.get(headerEnd) instanceof Label) {
@@ -215,7 +202,7 @@ public class SwingInterpreter implements GUIVisitor {
                 BorderFactory.createEmptyBorder(10, 10, 10, 10));
         }
 
-        // NORTH: header labels
+        // top: header labels (bold)
         if (!header.isEmpty()) {
             JPanel hp = new JPanel(new GridLayout(header.size(), 1, 0, 2));
             for (GUIElement el : header) {
@@ -227,7 +214,7 @@ public class SwingInterpreter implements GUIVisitor {
             pane.add(hp, BorderLayout.NORTH);
         }
 
-        // SOUTH: footer buttons in a flow layout
+        // bottom: buttons in a centered row
         if (!footer.isEmpty()) {
             JPanel fp = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
             for (GUIElement el : footer) {
@@ -237,21 +224,15 @@ public class SwingInterpreter implements GUIVisitor {
             pane.add(fp, BorderLayout.SOUTH);
         }
 
-        // CENTER: smart content placement
+        // middle: everything else
         if (!center.isEmpty()) {
             buildCenterRegion(pane, center);
         }
     }
 
-    /**
-     * Build the CENTER region of the auto-layout window.
-     *
-     * If a single element, it goes directly into CENTER.
-     * If the group contains a TextArea, it gets CENTER of a nested
-     * BorderLayout so it can expand, while elements before/after it
-     * go to NORTH/SOUTH of that nested panel.
-     * Otherwise elements are stacked vertically.
-     */
+    // Builds the center area of the window.
+    // If there's a TextArea, it gets the most space (goes in BorderLayout.CENTER
+    // of a nested panel). Otherwise just stack everything vertically.
     private void buildCenterRegion(Container pane, List<GUIElement> center) {
         if (center.size() == 1) {
             center.get(0).accept(this);
@@ -259,7 +240,7 @@ public class SwingInterpreter implements GUIVisitor {
             return;
         }
 
-        // Check for a TextArea element (it should expand)
+        // look for a TextArea (it should get the most room)
         int taIndex = -1;
         for (int i = 0; i < center.size(); i++) {
             if (center.get(i) instanceof TextArea) {
@@ -269,7 +250,7 @@ public class SwingInterpreter implements GUIVisitor {
         }
 
         if (taIndex >= 0) {
-            // Nested BorderLayout: TextArea in CENTER, others around it
+            // found a text area - give it center, put other stuff around it
             JPanel cp = new JPanel(new BorderLayout(5, 5));
 
             if (taIndex > 0) {
@@ -296,7 +277,7 @@ public class SwingInterpreter implements GUIVisitor {
 
             pane.add(cp, BorderLayout.CENTER);
         } else {
-            // Stack elements vertically with equal sizing
+            // no text area, just stack them
             JPanel cp = new JPanel(new GridLayout(center.size(), 1, 0, 5));
             for (GUIElement el : center) {
                 el.accept(this);
@@ -306,12 +287,9 @@ public class SwingInterpreter implements GUIVisitor {
         }
     }
 
-    // ───────── panel-type detection ─────────
+    // --- figuring out what kind of panel we're dealing with ---
 
-    /**
-     * A panel is "form-like" when it contains at least one label
-     * immediately followed by an input widget (text field, combo, etc.).
-     */
+    // a panel is "form-like" if it has label + input pairs (like Username: [____])
     private boolean isFormLike(List<GUIElement> children) {
         for (int i = 0; i < children.size() - 1; i++) {
             if (children.get(i) instanceof Label && isInputWidget(children.get(i + 1))) {
@@ -321,13 +299,14 @@ public class SwingInterpreter implements GUIVisitor {
         return false;
     }
 
+    // checks if something is an input widget
     private boolean isInputWidget(GUIElement el) {
         return el instanceof TextField || el instanceof TextArea
             || el instanceof ComboBox  || el instanceof Slider
             || el instanceof CheckBox;
     }
 
-    /** A toolbar contains only buttons, separators, and/or combo boxes. */
+    // toolbar = only buttons, separators, combos
     private boolean isToolbarLike(List<GUIElement> children) {
         if (children.isEmpty()) return false;
         for (GUIElement el : children) {
@@ -339,7 +318,7 @@ public class SwingInterpreter implements GUIVisitor {
         return true;
     }
 
-    /** A status bar contains only labels. */
+    // status bar = just labels
     private boolean isStatusBarLike(List<GUIElement> children) {
         if (children.isEmpty()) return false;
         for (GUIElement el : children) {
@@ -348,13 +327,12 @@ public class SwingInterpreter implements GUIVisitor {
         return true;
     }
 
-    // ───────── panel builders ─────────
+    // --- building specific panel types ---
 
-    /**
-     * Build a form panel by pairing labels with their adjacent input
-     * widgets into a 2-column grid.  Lone inputs (e.g. a checkbox
-     * without a preceding label) get an empty spacer in column 1.
-     */
+    // pairs up labels with their input fields into a 2-column grid
+    // e.g. "Username:" | [text field]
+    //      "Password:" | [text field]
+    //      (empty)     | [checkbox]
     private JPanel buildFormPanel(List<GUIElement> children) {
         List<GUIElement[]> rows = new ArrayList<>();
         int i = 0;
@@ -391,7 +369,7 @@ public class SwingInterpreter implements GUIVisitor {
         return jp;
     }
 
-    /** Build a toolbar-style panel with left-aligned flow layout. */
+    // toolbar-style: everything in a horizontal row
     private JPanel buildToolbarPanel(List<GUIElement> children) {
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
         for (GUIElement el : children) {
@@ -401,7 +379,7 @@ public class SwingInterpreter implements GUIVisitor {
         return jp;
     }
 
-    /** Build a status-bar-style panel with left-aligned flow layout. */
+    // status bar: labels in a row with some spacing
     private JPanel buildStatusBarPanel(List<GUIElement> children) {
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 2));
         for (GUIElement el : children) {
@@ -411,7 +389,7 @@ public class SwingInterpreter implements GUIVisitor {
         return jp;
     }
 
-    // ───────── helpers ─────────
+    // --- utility methods ---
 
     private void addChildren(Container parent, List<GUIElement> children,
                               List<Position> positions, Layout layout) {
@@ -419,7 +397,7 @@ public class SwingInterpreter implements GUIVisitor {
             GUIElement child = children.get(i);
             Position   pos   = positions.get(i);
 
-            child.accept(this); // sets currentComponent
+            child.accept(this); // this sets currentComponent
             JComponent comp = currentComponent;
 
             if (layout.getType() == LayoutType.BORDER && pos != null) {
@@ -430,6 +408,7 @@ public class SwingInterpreter implements GUIVisitor {
         }
     }
 
+    // converts our Layout model to an actual Swing LayoutManager
     private LayoutManager createLayout(Layout spec) {
         switch (spec.getType()) {
             case FLOW:
@@ -448,6 +427,7 @@ public class SwingInterpreter implements GUIVisitor {
         }
     }
 
+    // maps Position enum to BorderLayout constraint strings
     private String toBorderConstraint(Position pos) {
         switch (pos) {
             case NORTH:  return BorderLayout.NORTH;
@@ -459,6 +439,7 @@ public class SwingInterpreter implements GUIVisitor {
         }
     }
 
+    // sets tooltip if the widget has one
     private void applyTooltip(JComponent comp, Widget widget) {
         if (widget.getTooltip() != null) {
             comp.setToolTipText(widget.getTooltip());

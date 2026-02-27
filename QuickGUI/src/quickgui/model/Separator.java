@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: Separator — a visual divider line.
- */
+// Just a line to visually separate things.
 public class Separator extends Widget {
     public enum Orientation { HORIZONTAL, VERTICAL }
 

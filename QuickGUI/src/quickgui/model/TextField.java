@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: TextField — single-line text input.
- */
+// Single-line text input field.
 public class TextField extends Widget {
     private int columns = 20;
     private String defaultText = "";

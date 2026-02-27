@@ -2,11 +2,7 @@ package quickgui.examples;
 
 import quickgui.dsl.GUI;
 
-/**
- * Example 2: A text editor prototype.
- *
- * Demonstrates: text area, toolbar with buttons, separator, combo box, status labels.
- */
+// Simple text editor - toolbar buttons, a big text area, and a status bar at the bottom.
 public class TextEditorExample {
 
     public static void main(String[] args) {
@@ -18,7 +14,7 @@ public class TextEditorExample {
                .button("Open")
                .button("Save")
                .separator()
-               .comboBox("font", "Monospaced", "Arial", "Times New Roman")
+               .comboBox("font", "Calibri", "Arial", "Times New Roman")
            .endPanel()
            .textArea("editor", 20, 60)
            .panel("Status")

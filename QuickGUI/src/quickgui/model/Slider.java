@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: Slider — range selection widget.
- */
+// Slider for picking a number within a range.
 public class Slider extends Widget {
     private int min = 0;
     private int max = 100;

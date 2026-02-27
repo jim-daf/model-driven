@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: Button — a clickable widget with a label and an action callback.
- */
+// A button the user can click. Has a label and an optional action (Runnable).
 public class Button extends Widget {
     private final String label;
     private Runnable action;

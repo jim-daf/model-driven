@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Meta-model: Panel — a container for organizing child widgets and sub-panels.
- *
- * Panels have their own LayoutSpec and can be nested to form a hierarchy.
- */
+// Panel groups widgets together. Can be nested inside windows or other panels.
 public class Panel extends GUIElement {
     private Layout layout = Layout.VERTICAL;
-    private String borderTitle;  // optional titled border
-    private Position position;   // position inside a parent BorderLayout
+    private String borderTitle;  // text shown on the border (if any)
+    private Position position;   // where this panel sits in the parent
 
     private final List<GUIElement> children = new ArrayList<>();
     private final List<Position> positions = new ArrayList<>();

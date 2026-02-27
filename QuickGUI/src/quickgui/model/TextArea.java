@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model: TextArea — multi-line text input.
- */
+// Multi-line text input (like a notepad area).
 public class TextArea extends Widget {
     private int rows = 5;
     private int cols = 30;

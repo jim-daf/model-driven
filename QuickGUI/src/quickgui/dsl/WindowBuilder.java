@@ -2,14 +2,9 @@ package quickgui.dsl;
 
 import quickgui.model.*;
 import quickgui.interpreter.SwingInterpreter;
-import quickgui.codegen.JavaCodeGenerator;
 
-/**
- * Fluent builder for constructing a Window model node.
- *
- * Supports chaining: size, adding widgets, adding panels.
- * Terminal operations: build(), show(), generateCode().
- */
+// Builder for the Window. Lets you chain .size(), .label(), .button(), etc.
+// Call .show() at the end to display it.
 public class WindowBuilder extends ContainerBuilder<WindowBuilder> {
     private final Window window;
 
@@ -25,37 +20,25 @@ public class WindowBuilder extends ContainerBuilder<WindowBuilder> {
         window.addChild(child, null);
     }
 
-    /* --- window-specific configuration --- */
+    // window-specific stuff
 
-    /** Set the window size in pixels. */
+    // set window dimensions in pixels
     public WindowBuilder size(int width, int height) {
         window.setSize(width, height);
         return this;
     }
 
-    /* --- terminal operations --- */
+    // terminal operations (these end the chain)
 
-    /** Build and return the Window model object. */
+    // just returns the model object without showing anything
     public Window build() {
         return window;
     }
 
-    /** Build the model and immediately display it using the Swing interpreter. */
+    // builds the model and pops up the window using Swing
     public Window show() {
         Window w = build();
         new SwingInterpreter().interpret(w);
         return w;
-    }
-
-    /**
-     * Build the model and generate a standalone Java source file.
-     *
-     * @param className the name of the generated class
-     * @return the generated Java source code as a String
-     */
-    public String generateCode(String className) {
-        Window w = build();
-        JavaCodeGenerator gen = new JavaCodeGenerator(className);
-        return gen.generate(w);
     }
 }

@@ -2,12 +2,7 @@ package quickgui.examples;
 
 import quickgui.dsl.GUI;
 
-/**
- * Example 1: A simple login form built using the QuickGUI internal DSL.
- *
- * Demonstrates: labels, text fields, buttons, checkboxes, panels.
- * Notice: only strings and numbers -- no Java-specific code.
- */
+// Login form example - shows labels, text fields, buttons, checkbox, and a panel.
 public class LoginFormExample {
 
     public static void main(String[] args) {
@@ -22,8 +17,8 @@ public class LoginFormExample {
                .textField("password", 15)
                .checkBox("Remember me")
            .endPanel()
-           .button("Login")
-           .button("Cancel")
+           .button("Login",() -> System.out.println("Login button pressed!"))
+           .button("Cancel",() -> System.out.println("Cancel button pressed!"))
            .show();
     }
 }

@@ -4,9 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Meta-model: ComboBox — dropdown selection widget.
- */
+// Dropdown menu where you pick one option from a list.
 public class ComboBox extends Widget {
     private final List<String> items;
     private int selectedIndex = 0;

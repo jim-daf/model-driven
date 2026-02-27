@@ -1,8 +1,6 @@
 package quickgui.model;
 
-/**
- * Meta-model enum: Position constraint used with BorderLayout panels.
- */
+// Position inside a BorderLayout (north, south, etc.).
 public enum Position {
     NORTH,
     SOUTH,
