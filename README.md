@@ -36,7 +36,7 @@ java -cp out quickgui.examples.CodeGenExample
 
 ## DSL Usage
 
-Every DSL method takes **only strings and numbers** — no Java-specific types needed.
+Every DSL method takes **only strings and numbers** no Java-specific types needed.
 
 ### Minimal Example
 
