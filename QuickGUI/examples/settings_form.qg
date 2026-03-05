@@ -1,0 +1,17 @@
+window "Settings" size(400, 350) {
+    panel "Appearance" {
+        label "Theme:"
+        comboBox "theme" items("Light", "Dark", "System Default")
+        label "Font Size:"
+        slider "fontSize" range(8, 32) value(14)
+        checkBox "Show line numbers"
+        checkBox "Word wrap"
+    }
+
+    panel "Edit Profile" {
+        label "Change username:"
+        textField "username" columns(20)
+        label "Change password:"
+        textField "password" columns(6)
+    }
+}

@@ -1,0 +1,16 @@
+window "QuickEdit" size(600, 400) {
+    panel "Toolbar" {
+        button "New"
+        button "Open"
+        button "Save"
+        separator
+        comboBox "font" items("Calibri", "Arial", "Times New Roman")
+    }
+
+    textArea "editor" rows(20) cols(60)
+
+    panel "Status" {
+        label "Ready"
+        label "Ln 1, Col 1"
+    }
+}

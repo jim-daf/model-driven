@@ -1,0 +1,14 @@
+window "Login" size(350, 250) {
+    label "Please sign in"
+
+    panel "Credentials" {
+        label "Username:"
+        textField "username" columns(15)
+        label "Password:"
+        textField "password" columns(15)
+        checkBox "Remember me"
+    }
+
+    button "Login"
+    button "Cancel"
+}
